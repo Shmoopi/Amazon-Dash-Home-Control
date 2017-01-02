@@ -1,0 +1,80 @@
+{
+  "Dash": [
+    {
+      "Name": "Example Button 1",
+      "MAC": "1f:2e:3d:4c:5b:6a",
+      "Hue": [
+        {
+          "Name": "Hue Light Name Here"
+        }
+      ],
+      "Wemo": [
+        {
+          "Name": "WeMo Device Name Here",
+          "IP": "192.168.1.3",
+          "Port": "49153"
+        }
+      ]
+    },
+    {
+      "Name": "Example Button 2",
+      "MAC": "1f:2e:3d:4c:5b:6a",
+      "Wemo": [
+        {
+          "Name": "WeMo Device Name Here 2",
+          "IP": "192.168.1.3",
+          "Port": "49153"
+        }
+      ]
+    },
+    {
+      "Name": "Example Button 3",
+      "MAC": "1f:2e:3d:4c:5b:6a",
+      "Hue": [
+        {
+          "Name": "Hue Device Name Here 2"
+        }
+      ]
+    },
+    {
+      "Name": "Example Button 4",
+      "MAC": "1f:2e:3d:4c:5b:6a",
+      "Wemo": [
+        {
+          "Name": "WeMo Device Name Here 3",
+          "IP": "192.168.1.4",
+          "Port": "49153",
+          "Toggle": "Off"
+        },
+        {
+          "Name": "WeMo Device Name Here 4",
+          "IP": "192.168.1.5",
+          "Port": "49153",
+          "Toggle": "On"
+        },
+        {
+          "Name": "WeMo Device Name Here 4",
+          "IP": "192.168.1.6",
+          "Port": "49153"
+        }
+      ],
+      "Hue": [
+        {
+          "Name": "Hue Device Name Here 3",
+          "Toggle": "Off"
+        },
+        {
+          "Name": "Hue Device Name Here 4",
+          "Toggle": "On"
+        },
+        {
+          "Name": "Hue Device Name Here 5"
+        }
+      ]
+    }
+  ],
+  "Settings": {
+    "Hue_Bridge_ID": "123456",
+    "Hue_Username": "1028d66426293e821ecfd9ef1a0731df"
+  }
+}

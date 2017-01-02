@@ -32,3 +32,9 @@ node_modules
 
 # Optional REPL history
 .node_repl_history
+
+# Visual Studio Code
+.vscode
+
+# .ds_store
+.ds_store

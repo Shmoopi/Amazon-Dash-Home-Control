@@ -1,8 +1,8 @@
-# Dash Toggles
+# Amazon Dash Home Control
 Easily control Phillips Hue or WeMo Devices with Amazon Dash Buttons
 
 ## Description
-Have you ever dreamt about controlling your lights or outlets with a Dash button?  Look no further.  Using a simple JSON file, you can configure advanced automations and actions for [Amazon Dash Buttons](#Amazon-Dash-Buttons) to control your [Phillips Hue](#Phillips-Hue-Devices) or [WeMo](#WeMo-Devices) devices.  This application is written in node.js and works on the Raspberry Pi (tested on a Raspberry Pi Model 2 B).
+Using a simple JSON file, you can configure advanced automations and actions for [Amazon Dash Buttons](#Amazon-Dash-Buttons) to control your [Phillips Hue](#Phillips-Hue-Devices) or [WeMo](#WeMo-Devices) devices.  This application is written in node.js and works on the Raspberry Pi (tested on a Raspberry Pi Model 2 B).
 
 ## Installation
 ###### *This assumes you have an [Amazon Dash Button](#Amazon-Dash-Buttons) and at least one [Phillips Hue](#Phillips-Hue-Devices)/[WeMo](#WeMo-Devices) device to control

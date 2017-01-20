@@ -1,16 +1,16 @@
 {
-  "name": "dash-toggles",
-  "version": "0.0.1",
-  "description": "Application to control Hue and WeMo devices with Amazon Dash Buttons",
-  "main": "index.js",
-  "scripts": {
-    "start": "sudo node index.js"
-  },
-  "dependencies": {
-    "async": "*",
-    "node-dash-button": "^0.2.6",
-    "node-hue-api": "^2.0.0",
-    "wemo": "^0.2.1"
-  },
-  "license": "MIT"
+    "name": "amazon-dash-home-control",
+    "version": "0.0.2",
+    "description": "Application to control Hue and WeMo devices with Amazon Dash Buttons",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js"
+    },
+    "dependencies": {
+        "async": "*",
+        "node-dash-button": "^0.2.6",
+        "node-hue-api": "^2.0.0",
+        "wemo": "^0.2.1"
+    },
+    "license": "MIT"
 }

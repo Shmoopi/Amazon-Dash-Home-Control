@@ -46,7 +46,7 @@ function loopDashButtons() {
 } // Done loopDashButtons Function
 
 // Dash Function
-var dashFunction = function(dash_id) {
+var dashFunction = function (dash_id) {
 
     // Dash button pressed with MAC Address
     console.log('Dash Button with MAC Detected: ' + dash_id);
@@ -59,7 +59,7 @@ var dashFunction = function(dash_id) {
     }
 
     // Get the button from the dashButtons array filtered by MAC Address
-    var matchingButton = dashButtons.filter(function(entry) {
+    var matchingButton = dashButtons.filter(function (entry) {
         return entry.MAC == dash_id;
     });
     var button = matchingButton[0];
@@ -138,7 +138,7 @@ function loopWeMo(wemoDevices) {
 
             // Otherwise, search for the device - passing the WemoToggle variable into the
             // function scope
-            (function(wemoToggle) {
+            (function (wemoToggle) {
                 wemo.Search(wemoName, searchWeMoDeviceCallback);
             })(wemoToggle);
 
@@ -168,7 +168,7 @@ function wemoSetState(wemoSwitch, wemoToggle) {
 
         // Flip the state of the WeMo Device
         wemoSwitch
-            .getBinaryState(function(err, state) {
+            .getBinaryState(function (err, state) {
                 if (err)
                     console.error('Error: Unable to get WeMo Device State: ' + err);
                 console.log('Got state of wemo: ' + state);
@@ -186,201 +186,195 @@ function wemoSetState(wemoSwitch, wemoToggle) {
 } // Done WeMo setState Function
 
 // WeMo Device Search Callback
-var searchWeMoDeviceCallback = function(err, device) {
-        console.log('Found WeMo Device while searching');
+var searchWeMoDeviceCallback = function (err, device) {
+    console.log('Found WeMo Device while searching');
+
+    // Check for errors
+    if (err) {
+        // Error finding WeMo device
+        console.log('Error: Could not find WeMo Device: ' + err);
+        throw err;
+    }
+
+    // Got the WeMo device IP and Port from search
+    var wemoSwitch = new wemo(device.ip, device.port);
+    // console.log('Found WeMo Device: ' + JSON.stringify(wemoSwitch)); Set the
+    // state of the wemo device
+    wemoSetState(wemoSwitch, wemoToggle);
+} // Done WeMo Device Search Callback
+
+// WeMo SetState Function Callback
+var wemoFunctionCallback = function (err, result) {
+    // Check for an error
+    if (err) {
+        // Received an error
+        console.error('Error: Unable to set WeMo Device State: ' + err);
+    } else {
+        // No Error
+        console.log('Success: Set state of WeMo Device: ' + result);
+    }
+} // Done WeMo SetState Function Callback
+
+// Hue Bridge Search Function Callback
+var hueBridgeSearchFunctionCallback = function (hueDevices) {
+    return function (err, result) {
+        console.log('Searching for Hue Bridge...');
 
         // Check for errors
         if (err) {
-            // Error finding WeMo device
-            console.log('Error: Could not find WeMo Device: ' + err);
+            // Error finding bridge
+            console.log('Error: Unable to find bridge: ' + err);
             throw err;
         }
 
-        // Got the WeMo device IP and Port from search
-        var wemoSwitch = new wemo(device.ip, device.port);
-        // console.log('Found WeMo Device: ' + JSON.stringify(wemoSwitch)); Set the
-        // state of the wemo device
-        wemoSetState(wemoSwitch, wemoToggle);
-    } // Done WeMo Device Search Callback
+        // Get the specific bridge from the array of bridges in settings
+        // console.log("Hue Bridges Found: " + JSON.stringify(result));
+        var bridgesFound = result.filter(function (entry) {
+            return entry
+                .id
+                .toLowerCase()
+                .indexOf(automate.Settings.Hue_Bridge_ID) > -1;
+        });
+        var bridge = bridgesFound[0];
 
-// WeMo SetState Function Callback
-var wemoFunctionCallback = function(err, result) {
-        // Check for an error
-        if (err) {
-            // Received an error
-            console.error('Error: Unable to set WeMo Device State: ' + err);
-        } else {
-            // No Error
-            console.log('Success: Set state of WeMo Device: ' + result);
+        // Found the bridge console.log('Bridge: ' + JSON.stringify(bridge)); Create the
+        // Hue API access from the settings and the bridge
+        var api = new HueApi(bridge.ipaddress, automate.Settings.Hue_Username)
+        // console.log('API: ' + JSON.stringify(api)); Run through all the Hue Devices
+        // to toggle
+        for (var i = 0; i < hueDevices.length; i++) {
+
+            // Get the name of the light at the current index
+            var hueName = hueDevices[i].Name;
+
+            // Get the toggle state of the device
+            var hueToggle = hueDevices[i].Toggle;
+
+            // Find the lights and get the one that matches the current index - passing in
+            // the Hue Name and Hue Toggle values to the function scope
+            api.lights(hueLightSearchFunctionCallback(hueName, hueToggle, api));
+
         }
-    } // Done WeMo SetState Function Callback
+    }; // Done Hue Bridge Search Function Callback
 
-// Hue Bridge Search Function Callback
-var hueBridgeSearchFunctionCallback = function(hueDevices) {
-        return function(err, result) {
-            console.log('Searching for Hue Bridge...');
-
-            // Check for errors
-            if (err) {
-                // Error finding bridge
-                console.log('Error: Unable to find bridge: ' + err);
-                throw err;
-            }
-
-            // Get the specific bridge from the array of bridges in settings
-            // console.log("Hue Bridges Found: " + JSON.stringify(result));
-            var bridgesFound = result.filter(function(entry) {
-                return entry
-                    .id
-                    .toLowerCase()
-                    .indexOf(automate.Settings.Hue_Bridge_ID) > -1;
-            });
-            var bridge = bridgesFound[0];
-
-            // Found the bridge console.log('Bridge: ' + JSON.stringify(bridge)); Create the
-            // Hue API access from the settings and the bridge
-            var api = new HueApi(bridge.ipaddress, automate.Settings.Hue_Username)
-                // console.log('API: ' + JSON.stringify(api)); Run through all the Hue Devices
-                // to toggle
-            for (var i = 0; i < hueDevices.length; i++) {
-
-                // Get the name of the light at the current index
-                var hueName = hueDevices[i].Name;
-
-                // Get the toggle state of the device
-                var hueToggle = hueDevices[i].Toggle;
-
-                // Find the lights and get the one that matches the current index - passing in
-                // the Hue Name and Hue Toggle values to the function scope
-                api.lights(hueLightSearchFunctionCallback(hueName, hueToggle, api));
-
-            }
-        }; // Done Hue Bridge Search Function Callback
-
-    } // Done Hue Bridge Search Function Callback
+} // Done Hue Bridge Search Function Callback
 
 // Hue Light Search Function Callback
-var hueLightSearchFunctionCallback = function(hueName, hueToggle, api) {
-        return function(err, lights) {
-            console.log('Found Hue Devices');
+var hueLightSearchFunctionCallback = function (hueName, hueToggle, api) {
+    return function (err, lights) {
+        console.log('Found Hue Devices');
 
-            // Check for errors
-            if (err) {
-                // Error getting lights
-                console.log('Error: Unable to find Hue Devices: ' + err);
-                throw err;
-            }
+        // Check for errors
+        if (err) {
+            // Error getting lights
+            console.log('Error: Unable to find Hue Devices: ' + err);
+            throw err;
+        }
 
-            // console.log('Found Lights from Bridge: ' + JSON.stringify(lights));
-            // console.log("Name of Current Device: " + hueName); Get the specific light
-            // from the array of lights
-            var matchingDevice = lights
-                .lights
-                .filter(function(entry) {
-                    return entry.name == hueName;
-                });
-            var device = matchingDevice[0];
+        // console.log('Found Lights from Bridge: ' + JSON.stringify(lights));
+        // console.log("Name of Current Device: " + hueName); Get the specific light
+        // from the array of lights
+        var matchingDevice = lights
+            .lights
+            .filter(function (entry) {
+                return entry.name == hueName;
+            });
+        var device = matchingDevice[0];
 
-            // Found the light console.log('Found Device: ' + JSON.stringify(device)); Get
-            // the light status
-            api.getLightStatus(device.id, hueGetLightStatusFunctionCallback(hueToggle, device, api));
+        // Found the light console.log('Found Device: ' + JSON.stringify(device)); Get
+        // the light status
+        api.getLightStatus(device.id, hueGetLightStatusFunctionCallback(hueToggle, device, api));
 
-        }; // Done Hue Light Search Function Callback
+    }; // Done Hue Light Search Function Callback
 
-    } // Done Hue Light Search Function Callback
+} // Done Hue Light Search Function Callback
 
 // Hue Get Light Status Function Callback
-var hueGetLightStatusFunctionCallback = function(hueToggle, device, api) {
-        return function(err, light) {
-            console.log('Got Hue Device Status');
+var hueGetLightStatusFunctionCallback = function (hueToggle, device, api) {
+    return function (err, light) {
+        console.log('Got Hue Device Status');
 
-            // Check for errors
-            if (err) {
-                // Error getting Hue Device Status
-                console.log('Error: Unable to get Hue Device Status: ' + error(err.message));
-                throw err;
-            }
+        // Check for errors
+        if (err) {
+            // Error getting Hue Device Status
+            console.log('Error: Unable to get Hue Device Status: ' + error(err.message));
+            throw err;
+        }
 
-            // Check whether the device is on or off
-            if (light.state.reachable == true) {
-                console.log('Light is reachable');
+        // Check whether the device is on or off
+        if (light.state.reachable == true) {
+            console.log('Light is reachable');
 
-                // Check if the device should only be toggled one way
-                if (hueToggle !== undefined) {
-                    console.log("Setting Hue Device: " + device.name + ' ' + hueToggle);
+            // Check if the device should only be toggled one way
+            if (hueToggle !== undefined) {
+                console.log("Setting Hue Device: " + device.name + ' ' + hueToggle);
 
-                    // Check if the device should be turned on or off only
-                    if (hueToggle == "Off" || hueToggle == "off" || hueToggle === false) {
+                // Check if the device should be turned on or off only
+                if (hueToggle == "Off" || hueToggle == "off" || hueToggle === false) {
 
-                        // Turn it off
-                        var state = lightState
-                            .create()
-                            .off();
-                        api.setLightState(device.id, state, function(result) {
-                            console.log('Turning Light: ' + device.name + ': Off');
-                        });
-
-                    } else {
-
-                        // Turn it on
-                        var state = lightState
-                            .create()
-                            .on()
-                            .brightness(100);
-                        api.setLightState(device.id, state, function(result) {
-                            console.log('Turning Light: ' + device.name + ': On');
-                        });
-
-                    }
+                    // Turn it off
+                    var state = lightState
+                        .create()
+                        .off();
+                    api.setLightState(device.id, state, function (result) {
+                        console.log('Turning Light: ' + device.name + ': Off');
+                    });
 
                 } else {
-                    console.log("Toggling Hue Device: " + device.name);
 
-                    // Toggle the state
-                    if (light.state.on) {
+                    // Turn it on
+                    var state = lightState
+                        .create()
+                        .on()
+                        .brightness(100);
+                    api.setLightState(device.id, state, function (result) {
+                        console.log('Turning Light: ' + device.name + ': On');
+                    });
 
-                        // Turn it off
-                        var state = lightState
-                            .create()
-                            .off();
-                        api.setLightState(device.id, state, function(result) {
-                            console.log('Turning Light: ' + device.name + ' Off');
-                        });
+                }
 
-                    } else {
+            } else {
+                console.log("Toggling Hue Device: " + device.name);
 
-                        // Turn it on
-                        var state = lightState
-                            .create()
-                            .on()
-                            .brightness(100);
-                        api.setLightState(device.id, state, function(result) {
-                            console.log('Turning Light: ' + device.name + ' On');
-                        });
+                // Toggle the state
+                if (light.state.on) {
 
-                    } // Done toggling light state
+                    // Turn it off
+                    var state = lightState
+                        .create()
+                        .off();
+                    api.setLightState(device.id, state, function (result) {
+                        console.log('Turning Light: ' + device.name + ' Off');
+                    });
 
-                } // Done checking if Hue device should be toggled
+                } else {
 
-            } // Done checking if Hue device is reachable
+                    // Turn it on
+                    var state = lightState
+                        .create()
+                        .on()
+                        .brightness(100);
+                    api.setLightState(device.id, state, function (result) {
+                        console.log('Turning Light: ' + device.name + ' On');
+                    });
 
-        }; // Done Hue Get Light Status Function Callback
+                } // Done toggling light state
 
-    } // Done Hue Get Light Status Function Callback
+            } // Done checking if Hue device should be toggled
+
+        } // Done checking if Hue device is reachable
+
+    }; // Done Hue Get Light Status Function Callback
+
+} // Done Hue Get Light Status Function Callback
 
 /* Main */
-function main() {
-    // Welcome
-    console.log('Starting Dash Toggles...');
+console.log('Starting Dash Toggles...');
 
-    // Get all of the dash button MAC Addresses
-    if (!automate.Dash)
-        return;
-    var dashButtons = automate.Dash;
+// Get all of the dash button MAC Addresses
+if (!automate.Dash)
+    return;
+var dashButtons = automate.Dash;
 
-    // Loop through all the dash buttons
-    loopDashButtons();
-}
-
-// Call Main
-main();
+// Loop through all the dash buttons
+loopDashButtons();
